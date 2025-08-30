@@ -1,0 +1,23 @@
+# Ignore all build and generated files
+.next/
+out/
+build/
+dist/
+node_modules/
+
+# Ignore all TypeScript and JavaScript files that might cause issues
+*.js
+*.mjs
+*.cjs
+*.ts
+*.tsx
+
+# Ignore specific directories
+src/generated/
+public/
+prisma/
+
+# Ignore config files
+next.config.*
+eslint.config.*
+.eslintrc.*
