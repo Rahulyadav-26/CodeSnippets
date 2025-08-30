@@ -3,11 +3,15 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: any
 ) {
   try {
-    const { id: idParam } = await context.params;
-    const id = parseInt(idParam);
+    const paramsMaybe = context?.params;
+    const resolvedParams =
+      paramsMaybe && typeof (paramsMaybe as any)?.then === "function"
+        ? await paramsMaybe
+        : paramsMaybe;
+    const id = parseInt((resolvedParams?.id ?? "") as string);
     const { code } = await request.json();
 
     if (!code) {

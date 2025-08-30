@@ -5,9 +5,9 @@ import Link from "next/link";
 const SnippetDetailPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) => {
-  const id = parseInt((await params).id);
+  const id = parseInt(params.id);
 
   const snippet = await prisma.snippet.findUnique({
     where: {
