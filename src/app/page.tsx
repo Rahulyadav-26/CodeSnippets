@@ -1,103 +1,116 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const snippets = await prisma.snippet.findMany();
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#0b1020] via-[#130b2e] to-[#300a3b]">
+      {/* Background grid */}
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-25 [background:radial-gradient(#ffffff22_1px,transparent_1px)] [background-size:22px_22px]"></div>
+      {/* Aurora blobs */}
+      <div className="pointer-events-none absolute -top-40 -left-20 size-[32rem] rounded-full bg-[conic-gradient(at_30%_30%,#22d3ee_10%,#a78bfa_30%,#f472b6_50%,transparent_60%)] blur-3xl opacity-30 animate-pulse"></div>
+      <div className="pointer-events-none absolute -bottom-48 -right-10 size-[36rem] rounded-full bg-[conic-gradient(at_70%_70%,#f59e0b_10%,#10b981_30%,#60a5fa_50%,transparent_60%)] blur-3xl opacity-25 animate-pulse [animation-delay:800ms]"></div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <main className="relative z-10 mx-auto max-w-7xl px-6 py-16">
+        {/* Hero */}
+        <header className="mb-14 text-center">
+          <h1 className="text-balance bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-amber-300 bg-clip-text text-5xl font-black tracking-tight text-transparent md:text-7xl">
+            Code Snippets
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-white/70">
+            Your beautiful collection of code snippets, organized and ready to inspire
+          </p>
+        </header>
+
+        {/* Header Controls */}
+        <div className="mb-12 flex items-center justify-between rounded-3xl border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center gap-4">
+            <span className="size-3 animate-pulse rounded-full bg-red-400"></span>
+            <span className="size-3 animate-pulse rounded-full bg-yellow-400 [animation-delay:120ms]"></span>
+            <span className="size-3 animate-pulse rounded-full bg-green-400 [animation-delay:240ms]"></span>
+            <h2 className="ml-4 text-2xl font-semibold text-white">Your Snippets</h2>
+            <span className="ml-2 rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/60 ring-1 ring-white/10">
+              {snippets.length} total
+            </span>
+          </div>
+          <Link href="/snippet/new">
+            <Button className="rounded-full border-0 bg-gradient-to-r from-pink-500 to-violet-600 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.03] hover:from-pink-600 hover:to-violet-700 hover:shadow-xl">
+              <span className="mr-2">✨</span>
+              Create New
+            </Button>
+          </Link>
         </div>
+
+        {/* Grid */}
+        <section aria-label="Snippets" className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {snippets.map((snippet, index) => (
+            <div
+              key={snippet.id}
+              className="group relative overflow-hidden rounded-3xl border border-white/15 bg-white/10 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-3xl"
+              style={{ animationDelay: `${index * 80}ms` }}
+            >
+              {/* interactive shine */}
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute -inset-x-1 -top-1 h-28 bg-gradient-to-b from-white/30 to-transparent blur-2xl"></div>
+              </div>
+
+              {/* border glow */}
+              <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10 group-hover:ring-white/30"></div>
+
+              <div className="relative z-10 p-8">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg">
+                    <span className="text-2xl">💻</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="size-2 rounded-full bg-red-400"></span>
+                    <span className="size-2 rounded-full bg-yellow-400"></span>
+                    <span className="size-2 rounded-full bg-green-400"></span>
+                  </div>
+                </div>
+
+                <h3 className="mb-4 line-clamp-2 text-xl font-bold leading-tight text-white transition-colors duration-300 group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:to-pink-300 group-hover:bg-clip-text group-hover:text-transparent">
+                  {snippet.title}
+                </h3>
+
+                <div className="mb-6 h-px w-full bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+
+                <Link href={`/snippet/${snippet.id}`}>
+                  <Button className="w-full rounded-xl border-0 bg-gradient-to-r from-blue-600 to-purple-600 py-3 font-semibold text-white shadow-lg transition-transform duration-300 hover:scale-[1.03] hover:from-blue-700 hover:to-purple-700 hover:shadow-xl">
+                    <span className="mr-2">👁️</span>
+                    View Snippet
+                  </Button>
+                </Link>
+              </div>
+
+              {/* particles */}
+              <div className="absolute right-4 top-4 size-2 animate-ping rounded-full bg-white/40"></div>
+              <div className="absolute bottom-8 left-8 size-1 animate-pulse rounded-full bg-cyan-400/60"></div>
+            </div>
+          ))}
+        </section>
+
+        {snippets.length === 0 && (
+          <div className="relative mx-auto mt-6 max-w-2xl rounded-3xl border border-white/10 bg-white/10 p-12 text-center shadow-2xl backdrop-blur-xl">
+            <div className="mx-auto mb-8 flex size-32 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-2xl">
+              <span className="text-5xl">📝</span>
+            </div>
+            <h3 className="mb-3 text-3xl font-bold text-white">No snippets yet</h3>
+            <p className="mx-auto mb-8 max-w-md text-white/70">
+              Start building your collection of beautiful code snippets
+            </p>
+            <Link href="/snippet/new">
+              <Button className="rounded-full border-0 bg-gradient-to-r from-emerald-500 to-blue-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.03] hover:from-emerald-600 hover:to-blue-700 hover:shadow-xl">
+                Create Your First Snippet
+              </Button>
+            </Link>
+            {/* decorative */}
+            <div className="pointer-events-none absolute -top-24 left-1/2 size-72 -translate-x-1/2 rounded-full bg-fuchsia-500/30 blur-3xl"></div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
