@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // 🚑 disables TS errors only on build
   },
-  // Production optimizations
-  output: "standalone",
 };
 
 export default nextConfig;
