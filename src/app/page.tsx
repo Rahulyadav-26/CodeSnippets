@@ -15,12 +15,18 @@ export default async function Home() {
   let snippets: Snippet[] = [];
   let error: Error | null = null;
 
-  try {
-    snippets = await prisma.snippet.findMany();
-  } catch (err) {
-    console.error("Database connection error:", err);
-    error = err instanceof Error ? err : new Error("Unknown database error");
-    // Fallback to empty array if database is not available
+  // Only try to connect to database if we're not in build time
+  if (process.env.NODE_ENV !== "production" || process.env.DATABASE_URL) {
+    try {
+      snippets = await prisma.snippet.findMany();
+    } catch (err) {
+      console.error("Database connection error:", err);
+      error = err instanceof Error ? err : new Error("Unknown database error");
+      // Fallback to empty array if database is not available
+      snippets = [];
+    }
+  } else {
+    // In production build without DATABASE_URL, show empty state
     snippets = [];
   }
 

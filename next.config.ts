@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
   },
   // Ensure no linting happens during build
   lint: false,
+  // Prevent static generation that might trigger database calls
+  output: undefined,
+  // Disable static optimization for pages that need database
+  trailingSlash: false,
 };
 
 export default nextConfig;
