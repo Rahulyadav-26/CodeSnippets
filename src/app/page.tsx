@@ -2,8 +2,27 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
+// Make this page dynamic to prevent prerendering issues
+export const dynamic = "force-dynamic";
+
+interface Snippet {
+  id: number;
+  title: string;
+  code: string;
+}
+
 export default async function Home() {
-  const snippets = await prisma.snippet.findMany();
+  let snippets: Snippet[] = [];
+  let error: Error | null = null;
+
+  try {
+    snippets = await prisma.snippet.findMany();
+  } catch (err) {
+    console.error("Database connection error:", err);
+    error = err instanceof Error ? err : new Error("Unknown database error");
+    // Fallback to empty array if database is not available
+    snippets = [];
+  }
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#0b1020] via-[#130b2e] to-[#300a3b]">
@@ -20,7 +39,8 @@ export default async function Home() {
             Code Snippets
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-white/70">
-            Your beautiful collection of code snippets, organized and ready to inspire
+            Your beautiful collection of code snippets, organized and ready to
+            inspire
           </p>
         </header>
 
@@ -30,7 +50,9 @@ export default async function Home() {
             <span className="size-3 animate-pulse rounded-full bg-red-400"></span>
             <span className="size-3 animate-pulse rounded-full bg-yellow-400 [animation-delay:120ms]"></span>
             <span className="size-3 animate-pulse rounded-full bg-green-400 [animation-delay:240ms]"></span>
-            <h2 className="ml-4 text-2xl font-semibold text-white">Your Snippets</h2>
+            <h2 className="ml-4 text-2xl font-semibold text-white">
+              Your Snippets
+            </h2>
             <span className="ml-2 rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/60 ring-1 ring-white/10">
               {snippets.length} total
             </span>
@@ -43,8 +65,27 @@ export default async function Home() {
           </Link>
         </div>
 
+        {/* Database Error Message */}
+        {error && (
+          <div className="mb-8 rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-center shadow-2xl backdrop-blur-xl">
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-red-500/20">
+              <span className="text-2xl">⚠️</span>
+            </div>
+            <h3 className="mb-2 text-xl font-bold text-red-300">
+              Database Connection Issue
+            </h3>
+            <p className="text-red-200/80">
+              Unable to connect to database. Please check your DATABASE_URL
+              environment variable.
+            </p>
+          </div>
+        )}
+
         {/* Grid */}
-        <section aria-label="Snippets" className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <section
+          aria-label="Snippets"
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+        >
           {snippets.map((snippet, index) => (
             <div
               key={snippet.id}
@@ -92,12 +133,14 @@ export default async function Home() {
           ))}
         </section>
 
-        {snippets.length === 0 && (
+        {snippets.length === 0 && !error && (
           <div className="relative mx-auto mt-6 max-w-2xl rounded-3xl border border-white/10 bg-white/10 p-12 text-center shadow-2xl backdrop-blur-xl">
             <div className="mx-auto mb-8 flex size-32 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-2xl">
               <span className="text-5xl">📝</span>
             </div>
-            <h3 className="mb-3 text-3xl font-bold text-white">No snippets yet</h3>
+            <h3 className="mb-3 text-3xl font-bold text-white">
+              No snippets yet
+            </h3>
             <p className="mx-auto mb-8 max-w-md text-white/70">
               Start building your collection of beautiful code snippets
             </p>
