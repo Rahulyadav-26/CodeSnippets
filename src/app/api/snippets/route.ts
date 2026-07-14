@@ -25,3 +25,17 @@ export async function DELETE(req: NextRequest) {
 
   return NextResponse.json({ ok: true });
 }
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+
+  const snippet = await prisma.snippet.create({
+    data: {
+      title: body.title,
+      code: body.code,
+      userId: body.userId,
+    },
+  });
+
+  return NextResponse.json(snippet, { status: 201 });
+}
